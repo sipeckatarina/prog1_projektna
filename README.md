@@ -1,8 +1,8 @@
 ﻿Romani v knjigarni Felix
 ========================================
 
-Analizirala bom 1148 romanov knjigarne Felix na strani 
-http://felix.si/50-romani?n=54&id_category=50
+Analizirala bom 1000 romanov (prvih 20 strani) knjigarne Felix na strani 
+http://felix.si/50-romani?n=54&id_category=50 in naprej
 
 Za vsako knjigo bom zajela:
 * naslov in avtorja
