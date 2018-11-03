@@ -7,7 +7,12 @@ romani_url = 'http://felix.si/50-romani?n=54&id_category=50'
 romani_directory = 'podatki'
 romani_directory_new = 'novi_podatki'
 page_filename = 'page'  #.html
+page_filename_new = 'new_page'  #.html
+csv_directory = 'csv_podatki'
 csv_filename = 'romani.csv'
+
+empty_key = '-'
+keys = ['sifra', 'naslov', 'avtor', 'cena', 'stevilo_strani', 'dimenzije', 'leto_izdaje', 'prevajalec', 'vezava', 'zalozba']
 
 
 #s strni z url-jem url pobere html
@@ -38,6 +43,7 @@ def save_strings_to_files():
     return None
 
 
+#snete prve strani
 ##############################################################################################################
 
 
@@ -46,7 +52,6 @@ def read_file_to_string(directory, filename):
     '''Return the contents of the file "directory"/"filename" as a string.'''
     path = os.path.join(directory, filename)
     with open(path, 'r', encoding='utf-8') as file_in:
-        #print('sem v read_file_to_string({}, {})'.format(directory, filename))
         return file_in.read()
 
 
@@ -59,9 +64,7 @@ def find_links(directory, filename):
     linki_romanov = set()
     for l in links:
         if ('romani' in l) or ('kriminalk' in l):
-            print(l)
             linki_romanov.add(l[6:-1])
-    print('**************************************************************', len(linki_romanov))
     return linki_romanov
 
 
@@ -69,7 +72,6 @@ def find_links(directory, filename):
 def save_links_to_file(list_of_links, directory, filename):
     text = ''
     for i in list_of_links:
-        #print(i)
         text += download_url_to_string(i)
     save_string_to_file(text, directory, filename)
 
@@ -78,16 +80,82 @@ def save_links_to_file(list_of_links, directory, filename):
 def new_html_files():
     for i in range(1, 21):
         links = find_links(romani_directory, 'page{}.html'.format(i))
-        save_links_to_file(links, romani_directory_new, 'new_page{}.html'.format(i))
+        save_links_to_file(links, romani_directory_new, page_filename_new + '{}.html'.format(i))
 
 
+#snete notranje strani
 ##############################################################################################################
 
 
 #razdeli nove html-je na posamezne knjige
 def page_to_ads(page):
-    #read_file_to_string(directory, filename)
     rx = re.compile(r'<!DOCTYPE.*?</html>',
                     re.DOTALL)
     ads = re.findall(rx, page)
-    return len(ads)  #odstrani 'len'
+    return ads
+
+
+#najde podatke enega romana
+def make_a_dictionary(ad):
+    dictionary = {}
+    tab = keys
+    rx_list = [r'<span >Šifra: </span> (?P<sifra>.*?)</li>',
+                r'<title >(?P<naslov>.*?) - FELIX.si</title>',
+                r'<span >Avtor: </span> (?P<avtor>.*?)</li>',
+                r'<span id="our_price_display">(?P<cena>.*?)</span>',
+                r'<span >&Scaron;tevilo strani: </span> (?P<stevilo_strani>.*?)</li>',
+                r'<span >Dimenzije: </span> (?P<dimenzije>.*?)</li>',
+                r'<span >Leto izdaje: </span> (?P<leto_izdaje>.*?)</li>',
+                r'<span >Prevajalec: </span> (?P<prevajalec>.*?)</li>',
+                r'<span >Vezava: </span> (?P<vezava>.*?)</li>',
+                r'<span >Založba: </span> (?P<zalozba>.*?)</li>']
+    for i in range(10):
+        rx = re.compile(rx_list[i], re.DOTALL)
+        data = re.search(rx, ad)
+        if data != None:
+            dic = data.groupdict()
+            for i in dic:
+                dictionary[i] = dic[i]
+        else:
+            dictionary[tab[i]] = empty_key
+    return dictionary
+
+
+#seznam slovarjev podatkov z ene strani
+def page_to_dicts(directory, filename):
+    page = read_file_to_string(directory, filename)
+    ads = page_to_ads(page)
+    dic = [0 for i in range(len(ads))]
+    for i in range(len(ads)):
+        dic[i] = make_a_dictionary(ads[i])
+    return dic
+
+
+#pobere podatke z vseh strani in jih shrani v seznam slovarjev
+def get_all_dicts():
+    dicts = []
+    for i in range(1, 21):
+        dic = page_to_dicts(romani_directory_new, page_filename_new + '{}.html'.format(i))
+        dicts += dic
+    return dicts
+
+
+#dobljeni podatki
+##############################################################################################################
+
+
+#napise csv
+def write_csv(fieldnames, rows, directory, filename):
+    os.makedirs(directory, exist_ok=True)
+    path = os.path.join(directory, filename)
+    with open(path, 'w', encoding='utf-8') as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow(row)
+    return None
+
+
+#napise dejanski csv romanov
+def write_csv_romani():
+    write_csv(keys, get_all_dicts(), csv_directory, csv_filename)
