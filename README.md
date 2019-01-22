@@ -18,4 +18,4 @@ Delovne hipoteze:
 * Kateri avtorji so napisali največ romanov in kateri prevajalci so jih največ prevedli?
 * Ali so romani z več stranmi dražji?
 
-Datoteka romani.csv vsebuje vse zgoraj navedene podatke v istem vrstnem redu.
+Datoteka romani.csv v mapi csv_podatki vsebuje vse zgoraj navedene podatke v istem vrstnem redu.
