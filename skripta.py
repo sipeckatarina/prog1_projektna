@@ -12,7 +12,7 @@ csv_directory = 'csv_podatki'
 csv_filename = 'romani.csv'
 
 empty_key = '-'
-keys = ['sifra', 'naslov', 'avtor', 'cena', 'stevilo_strani', 'dimenzije', 'leto_izdaje', 'prevajalec', 'vezava', 'zalozba']
+keys = ['sifra', 'naslov', 'avtor', 'cena_v_evrih', 'stevilo_strani', 'dimenzije', 'leto_izdaje', 'prevajalec', 'vezava', 'zalozba']
 
 
 #s strni z url-jem url pobere html
@@ -85,7 +85,12 @@ def new_html_files():
 
 #snete notranje strani
 ##############################################################################################################
-
+def spremen(niz):
+    nizz = ''
+    for znak in niz:
+        if znak in '0123456789':
+            nizz += znak
+    return nizz
 
 #razdeli nove html-je na posamezne knjige
 def page_to_ads(page):
@@ -100,25 +105,52 @@ def make_a_dictionary(ad):
     dictionary = {}
     tab = keys
     rx_list = [r'<span >Šifra: </span> (?P<sifra>.*?)</li>',
-                r'<title >(?P<naslov>.*?) - FELIX.si</title>',
-                r'<span >Avtor: </span> (?P<avtor>.*?)</li>',
-                r'<span id="our_price_display">(?P<cena>.*?)</span>',
-                r'<span >&Scaron;tevilo strani: </span> (?P<stevilo_strani>.*?)</li>',
-                r'<span >Dimenzije: </span> (?P<dimenzije>.*?)</li>',
-                r'<span >Leto izdaje: </span> (?P<leto_izdaje>.*?)</li>',
-                r'<span >Prevajalec: </span> (?P<prevajalec>.*?)</li>',
-                r'<span >Vezava: </span> (?P<vezava>.*?)</li>',
-                r'<span >Založba: </span> (?P<zalozba>.*?)</li>']
+               r'<title >(?P<naslov>.*?) - FELIX.si</title>',
+               r'<span >Avtor: </span> (?P<avtor>.*?)</li>',
+               r'<span id="our_price_display">(?P<cena_v_evrih>.*?)</span>',
+               r'<span >&Scaron;tevilo strani: </span> (?P<stevilo_strani>.*?)</li>',
+               r'<span >Dimenzije: </span> (?P<dimenzije>.*?)</li>',
+               r'<span >Leto izdaje: </span> (?P<leto_izdaje>.*?)</li>',
+               r'<span >Prevajalec: </span> (?P<prevajalec>.*?)</li>',
+               r'<span >Vezava: </span> (?P<vezava>.*?)</li>',
+               r'<span >Založba: </span> (?P<zalozba>.*?)</li>']
     for i in range(10):
         rx = re.compile(rx_list[i], re.DOTALL)
         data = re.search(rx, ad)
         if data != None:
             dic = data.groupdict()
             for i in dic:
-                dictionary[i] = dic[i]
+                if i == "leto_izdaje":
+                    if len(dic[i]) > 4:
+                        dic[i] = dic[i][-4:]
+                    c = spremen(dic[i])
+                    if c:
+                        dic[i] = int(c)
+                    else:
+                        dic[i] = 0
+                if i == "stevilo_strani":
+                    c = spremen(dic[i])
+                    if c:
+                        dic[i] = int(c)
+                    else:
+                        dic[i] = 0
+                if i == 'cena_v_evrih':
+                    c = dic[i][:-2].replace(',', '.')
+                    dic[i] = float(c)
+                if i == 'vezava':
+                    if dic[i] in 'Trdatrda':
+                        dic[i] = 'trda'
+                    elif dic[i] in 'Žepna knjiga žepna knjiga':
+                        dic[i] = 'žepna'
+                    elif dic[i] in 'Bro&scaron;iranaBro&scaron;iranobro&scaron;iranabro&scaron;irano':
+                        dic[i] = 'broširana'
+                    elif dic[i] in 'Mehkamehka':
+                        dic[i] = 'mehka'
+            dictionary[i] = dic[i]
         else:
-            dictionary[tab[i]] = empty_key
+            dictionary[tab[i]] = 0
     return dictionary
+
 
 
 #seznam slovarjev podatkov z ene strani
@@ -159,3 +191,25 @@ def write_csv(fieldnames, rows, directory, filename):
 #napise dejanski csv romanov
 def write_csv_romani():
     write_csv(keys, get_all_dicts(), csv_directory, csv_filename)
+
+write_csv_romani()
+
+##############################################################################################################
+
+def no_repeated_rows():
+    new_rows = []
+    with open('csv_podatki/romani.csv', 'r', encoding='utf8') as in1:
+        titles = []
+        for line in in1:
+            try:
+                title = line.split(',')[1]
+                if title not in titles:
+                    titles.append(line.split(',')[1])
+                    new_rows.append(line)
+            except IndexError:
+                pass
+    with open('csv_podatki/romani.csv', 'w', encoding='utf8') as out1:
+        for line in new_rows:
+            out1.write(line)
+
+no_repeated_rows()  
