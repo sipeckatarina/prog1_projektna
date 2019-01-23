@@ -14,12 +14,18 @@ Za vsako knjigo bom zajela:
 * vezavo in založbo
 
 Delovne hipoteze:
-* Je več romanov s trdo vezavo ali žepnih knjig?
+* Katrerega leta je izslo najvec romanov, ki jih hrani Felix?
+* Kakšne so povezave med vezavo, ceno in številom strani romana?
 * Kateri avtorji so napisali največ romanov in kateri prevajalci so jih največ prevedli?
-* Ali so romani z več stranmi dražji?
 
-<<<<<<< HEAD
-Datoteka romani.csv v mapi csv_podatki vsebuje vse zgoraj navedene podatke v istem vrstnem redu.
-=======
-Datoteka romani.csv v mapi csv_podatki vsebuje vse zgoraj navedene podatke v istem vrstnem redu.
->>>>>>> 7a69d9e780880836cb1f0d92271254dd25b8f7eb
+Datoteka romani.csv vsebuje vse zgoraj navedene podatke v istem vrstnem redu.
+
+Ljudem, ki si želijo analizirati podatke s strani knjigarne Felix, priporočam, da tega ne 
+storijo, saj je spletna stran zelo nekonsistentna in je potrebno veliko obdelave podatkov na roke.
+
+Zahvaljujem se Tjažu Silovšku, Mateju Marinkotu in Vidu Drobniču za pomoč pri vzpostavitvi 
+programov in začetku analize podatkov.
+Posebne zahvale grejo Mateju Janežiču za pomoč pri vsaki malenkosti, dostopnost v vsakem 
+trenutku in prenašanje mojih živcev.
+Mateju in Tjažu se zahvaljujem tudi za moralno podporo in optimizem.
+
