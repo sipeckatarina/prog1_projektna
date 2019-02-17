@@ -1,10 +1,16 @@
-﻿Romani v knjigarni Felix
-========================================
+﻿# Romani v knjigarni Felix 
 
-Analizirala bom 1000 romanov (prvih 20 strani) knjigarne Felix na strani 
-http://felix.si/50-romani?n=54&id_category=50 in naprej.
+Analizirala sem 1000 romanov (prvih 20 strani) [knjigarne Felix](http://felix.si/50-romani?n=54&id_category=50).
 
-Za vsako knjigo bom zajela:
+## Zajem podatkov 
+
+Datoteka [romani.csv](csv_podatki/romani.csv) 
+(v mapi csv_podatki) vsebuje vse zgoraj navedene podatke v istem vrstnem redu.
+Najprej sem zajela prvih 50 strani, a ker je bilo zajetih premalo podatkov za posamezno knjigo, sem v htlm-jih teh
+strani poiskala linke do strani s podatki posameznega romana. Koda je v datoteki 
+[skripta.py](skripta.py).
+
+Za vsako knjigo sem zajela:
 * šifro
 * naslov in avtorja
 * ceno
@@ -13,13 +19,17 @@ Za vsako knjigo bom zajela:
 * ime prevajalca
 * vezavo in založbo
 
+## Analiza podatkov 
+
 Delovne hipoteze:
-* Katrerega leta je izslo najvec romanov, ki jih hrani Felix?
+* Katerega leta je izšlo največ romanov, ki jih hrani Felix?
 * Kakšne so povezave med vezavo, ceno in številom strani romana?
 * Kateri avtorji so napisali največ romanov in kateri prevajalci so jih največ prevedli?
 
-Datoteka romani.csv vsebuje vse zgoraj navedene podatke v istem vrstnem redu.
+Celotna analiza in rezultati so opisani v datoteki 
+[Analiza_romanov.ipynb](Analiza_romanov.ipynb).
+
+## Komantar 
 
 Ljudem, ki si želijo analizirati podatke s strani knjigarne Felix, priporočam, da tega ne 
-storijo, saj je spletna stran zelo nekonsistentna in je potrebno veliko obdelave podatkov na roke.
-
+storijo, saj je spletna stran zelo nekonsistentna in je potrebno veliko ročne obdelave podatkov.
